@@ -10,7 +10,7 @@ st.set_page_config(
     menu_items={
         'Get Help': 'https://www.streamlit.io/help',
         'Report a bug': "https://github.com/streamlit/streamlit/issues",
-        'About': "# Ini adalah aplikasi absensi apel pagi."
+        'About': "# aplikasi danton apel pagi."
     }
 )
 
