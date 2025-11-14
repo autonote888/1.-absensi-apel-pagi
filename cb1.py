@@ -4,7 +4,7 @@ from datetime import datetime
 
 # --- SET PAGE CONFIG ---
 st.set_page_config(
-    page_title="Absensi Apel Pagi",
+    page_title="Rekap Absensi Apel Pagi untuk danton",
     layout="centered",
     initial_sidebar_state="collapsed",
     menu_items={
