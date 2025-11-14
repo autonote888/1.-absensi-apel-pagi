@@ -110,7 +110,7 @@ tanggal = st.date_input("Tanggal Apel", datetime.now().date(), help="Pilih tangg
 st.markdown("---")
 
 # ===== TOMBOL PROSES =====
-if st.button("🚀 Generate Laporan Absensi"):
+if st.button("Generate Laporan Absensi"):
     # 1. Validasi angka kehadiran
     if (hadir + sakit + izin + dinas) > jumlah_personel:
          st.error("❗ Total angka kehadiran melebihi jumlah personel. Harap periksa kembali.")
