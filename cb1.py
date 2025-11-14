@@ -1,41 +1,58 @@
-def garis():
-    print("-" * 50)
+import streamlit as st
+import pandas as pd
+from datetime import datetime
 
-def main():
-    garis()
-    print("   SISTEM LAPORAN APEL PAGI (INPUT MANUAL)")
-    garis()
+st.set_page_config(page_title="Absensi Apel Pagi", layout="centered")
 
-    total_personel = int(input("Jumlah Personel       : "))
-    hadir = int(input("Jumlah Hadir          : "))
-    sakit = int(input("Jumlah Sakit          : "))
-    izin = int(input("Jumlah Izin           : "))
-    tanpa_ket = int(input("Tanpa Keterangan (TK) : "))
+st.title("📋 SISTEM LAPORAN APEL PAGI (INPUT MANUAL)")
+st.write("---")
 
-    # Kalkulasi otomatis
-    total_tidak_hadir = sakit + izin + tanpa_ket
-    selisih = total_personel - hadir
+# ===== INPUT DATA =====
+jumlah_personel = st.number_input("Jumlah Personel", min_value=0, step=1)
+hadir = st.number_input("Jumlah Hadir", min_value=0, max_value=jumlah_personel, step=1)
+sakit = st.number_input("Jumlah Sakit", min_value=0, max_value=jumlah_personel, step=1)
+izin = st.number_input("Jumlah Izin", min_value=0, max_value=jumlah_personel, step=1)
 
-    garis()
-    print("                 LAPORAN APEL PAGI")
-    garis()
-    print(f"Total Personel : {total_personel}")
-    print(f"Hadir          : {hadir}")
-    print(f"Tidak Hadir    : {total_tidak_hadir}")
-    print(f"  - Sakit      : {sakit}")
-    print(f"  - Izin       : {izin}")
-    print(f"  - TK         : {tanpa_ket}")
-    print(f"Selisih        : {selisih}")
-    garis()
+# dihitung otomatis
+tanpa_kehadiran = jumlah_personel - (hadir + sakit + izin)
 
-    # Catatan otomatis
-    if selisih == total_tidak_hadir:
-        print("STATUS: Valid ✔ Semua ketidakhadiran tercatat.")
+if tanpa_kehadiran < 0:
+    st.error("❗ Total Hadir + Sakit + Izin melebihi jumlah personel.")
+else:
+    st.info(f"Personel Tanpa Kehadiran: **{tanpa_kehadiran}**")
+
+st.write("---")
+tanggal = st.date_input("Tanggal Apel", datetime.now().date())
+
+# ===== TOMBOL PROSES =====
+if st.button("📄 Generate Laporan"):
+    if jumlah_personel == 0:
+        st.warning("Jumlah personel tidak boleh nol.")
     else:
-        print("STATUS: ⚠ Data tidak sinkron. Periksa kembali input.")
+        st.success("Laporan Absensi Berhasil Dibuat!")
 
-    garis()
+        laporan = {
+            "Tanggal": [tanggal.strftime("%d-%m-%Y")],
+            "Jumlah Personel": [jumlah_personel],
+            "Hadir": [hadir],
+            "Sakit": [sakit],
+            "Izin": [izin],
+            "Tanpa Kehadiran": [tanpa_kehadiran]
+        }
 
+        df = pd.DataFrame(laporan)
 
-if __name__ == "__main__":
-    main()
+        st.subheader("📊 Hasil Laporan Apel Pagi")
+        st.table(df)
+
+        # Simpan sebagai CSV untuk diunduh
+        csv = df.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            label="⬇️ Download Laporan CSV",
+            data=csv,
+            file_name=f"laporan_apel_{tanggal}.csv",
+            mime="text/csv"
+        )
+
+st.write("---")
+st.caption("Sistem Absensi Apel Pagi — Streamlit Version")
