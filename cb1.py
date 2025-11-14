@@ -57,12 +57,17 @@ st.markdown("---")
 st.subheader("📝 Input Data Kehadiran")
 
 # ===== INPUT ANGKA =====
-# Input Total Personel tetap 0 karena ini adalah nilai maksimum untuk input lainnya
-jumlah_personel = st.number_input("Total Jumlah Personel", min_value=0, step=1, value=0, help="Masukkan total personel yang seharusnya hadir.")
+
+# MODIFIKASI: Input Total Personel diset value=None
+jumlah_personel_input = st.number_input("Total Jumlah Personel", min_value=0, step=1, value=None, help="Masukkan total personel yang seharusnya hadir.")
+
+# Handle None: Jika input kosong (None), gunakan 0 untuk perhitungan
+jumlah_personel = jumlah_personel_input if jumlah_personel_input is not None else 0
+
 
 col1, col2, col3, col4 = st.columns(4)
 
-# SEMUA INPUT INI DIUBAH AGAR VALUE=NONE (KOSONG AWAL)
+# SEMUA INPUT INI MENGGUNAKAN value=None DAN MAX_VALUE DARI JUMLAH_PERSONEL
 with col1:
     hadir_input = st.number_input("Hadir", min_value=0, max_value=jumlah_personel, step=1, value=None)
 with col2:
@@ -183,4 +188,4 @@ if st.button("🚀 Generate Laporan Absensi"):
             st.info("Tidak ada data nama yang perlu diunduh.")
 
 st.markdown("---")
-st.caption("🚀 Ditenagai oleh Streamlit | Absensi Apel Pagi v1.2")
+st.caption("🚀 Ditenagai oleh Streamlit | Absensi Apel Pagi v1.3")
