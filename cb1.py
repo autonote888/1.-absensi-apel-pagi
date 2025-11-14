@@ -15,7 +15,6 @@ st.set_page_config(
 )
 
 # --- CUSTOM CSS FOR MODERN LOOK ---
-# (Digunakan untuk mempercantik tampilan tombol, alert, dan header)
 st.markdown("""
     <style>
     .main-header {
@@ -58,19 +57,26 @@ st.markdown("---")
 st.subheader("📝 Input Data Kehadiran")
 
 # ===== INPUT ANGKA =====
-jumlah_personel = st.number_input("Total Jumlah Personel", min_value=0, step=1, help="Masukkan total personel yang seharusnya hadir.")
+# Input Total Personel tetap 0 karena ini adalah nilai maksimum untuk input lainnya
+jumlah_personel = st.number_input("Total Jumlah Personel", min_value=0, step=1, value=0, help="Masukkan total personel yang seharusnya hadir.")
 
-# Menggunakan kolom untuk input yang lebih ringkas
 col1, col2, col3, col4 = st.columns(4)
 
+# SEMUA INPUT INI DIUBAH AGAR VALUE=NONE (KOSONG AWAL)
 with col1:
-    hadir = st.number_input("Hadir", min_value=0, max_value=jumlah_personel, step=1)
+    hadir_input = st.number_input("Hadir", min_value=0, max_value=jumlah_personel, step=1, value=None)
 with col2:
-    sakit = st.number_input("Sakit", min_value=0, max_value=jumlah_personel, step=1)
+    sakit_input = st.number_input("Sakit", min_value=0, max_value=jumlah_personel, step=1, value=None)
 with col3:
-    izin = st.number_input("Izin", min_value=0, max_value=jumlah_personel, step=1)
+    izin_input = st.number_input("Izin", min_value=0, max_value=jumlah_personel, step=1, value=None)
 with col4:
-    dinas = st.number_input("Dinas / Tugas Luar", min_value=0, max_value=jumlah_personel, step=1)
+    dinas_input = st.number_input("Dinas / Tugas Luar", min_value=0, max_value=jumlah_personel, step=1, value=None)
+
+# Handle None: Jika input kosong (None), gunakan 0 untuk perhitungan
+hadir = hadir_input if hadir_input is not None else 0
+sakit = sakit_input if sakit_input is not None else 0
+izin = izin_input if izin_input is not None else 0
+dinas = dinas_input if dinas_input is not None else 0
 
 # Hitung Tanpa Kehadiran (Alpha)
 tanpa_kehadiran = jumlah_personel - (hadir + sakit + izin + dinas)
@@ -124,7 +130,6 @@ if st.button("🚀 Generate Laporan Absensi"):
         df_laporan = pd.DataFrame(laporan_data)
 
         st.subheader(f"📊 Ringkasan Kehadiran Apel Tanggal {tanggal.strftime('%d %B %Y')}")
-        # Menggunakan st.dataframe untuk tampilan tabel yang modern
         st.dataframe(df_laporan.set_index("Kategori")) 
 
         st.markdown("---")
@@ -156,7 +161,6 @@ if st.button("🚀 Generate Laporan Absensi"):
         st.markdown("---")
 
         # Simpan CSV
-        # Memformat data agar siap untuk di-download
         all_names = []
         for name in list_sakit:
             all_names.append({"Kategori": "Sakit", "Nama": name})
@@ -179,4 +183,4 @@ if st.button("🚀 Generate Laporan Absensi"):
             st.info("Tidak ada data nama yang perlu diunduh.")
 
 st.markdown("---")
-st.caption("🚀 Ditenagai oleh Streamlit | Absensi Apel Pagi v1.1")
+st.caption("🚀 Ditenagai oleh Streamlit | Absensi Apel Pagi v1.2")
