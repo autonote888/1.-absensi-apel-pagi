@@ -142,7 +142,7 @@ if st.button("Generate Laporan Absensi"):
         }
         df_laporan = pd.DataFrame(laporan_data)
 
-        st.subheader(f"📊 Ringkasan Kehadiran Apel Tanggal {tanggal.strftime('%d %B %Y')}")
+        st.subheader(f"Ringkasan Kehadiran Apel Tanggal {tanggal.strftime('%d %B %Y')}")
         # Menampilkan DataFrame baru
         st.dataframe(df_laporan.set_index("Kategori")) 
 
