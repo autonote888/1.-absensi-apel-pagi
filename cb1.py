@@ -47,6 +47,10 @@ st.markdown("""
         padding: 10px;
         box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
     }
+    /* Pastikan kolom Detail Nama di DataFrame terlihat luas */
+    .dataframe th:nth-child(3), .dataframe td:nth-child(3) {
+        width: 60%;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -54,20 +58,14 @@ st.markdown("""
 st.markdown("<h1 class='main-header'>✨ Absensi Apel Pagi ✨</h1>", unsafe_allow_html=True)
 st.markdown("---")
 
-st.subheader("📝 Input Data Kehadiran")
+st.subheader("Input Data Kehadiran")
 
 # ===== INPUT ANGKA =====
-
-# MODIFIKASI: Input Total Personel diset value=None
 jumlah_personel_input = st.number_input("Total Jumlah Personel", min_value=0, step=1, value=None, help="Masukkan total personel yang seharusnya hadir.")
-
-# Handle None: Jika input kosong (None), gunakan 0 untuk perhitungan
 jumlah_personel = jumlah_personel_input if jumlah_personel_input is not None else 0
-
 
 col1, col2, col3, col4 = st.columns(4)
 
-# SEMUA INPUT INI MENGGUNAKAN value=None DAN MAX_VALUE DARI JUMLAH_PERSONEL
 with col1:
     hadir_input = st.number_input("Hadir", min_value=0, max_value=jumlah_personel, step=1, value=None)
 with col2:
@@ -77,7 +75,6 @@ with col3:
 with col4:
     dinas_input = st.number_input("Dinas / Tugas Luar", min_value=0, max_value=jumlah_personel, step=1, value=None)
 
-# Handle None: Jika input kosong (None), gunakan 0 untuk perhitungan
 hadir = hadir_input if hadir_input is not None else 0
 sakit = sakit_input if sakit_input is not None else 0
 izin = izin_input if izin_input is not None else 0
@@ -89,7 +86,7 @@ tanpa_kehadiran = jumlah_personel - (hadir + sakit + izin + dinas)
 if tanpa_kehadiran < 0:
     st.error("❗ Total jumlah kehadiran melebihi jumlah personel yang terdaftar.")
 elif tanpa_kehadiran == 0 and jumlah_personel > 0:
-    st.success("🎉 Semua personel terisi!")
+    st.success("Semua personel terisi!")
 else:
     st.info(f"Personel Tanpa Keterangan (Alpha): **{tanpa_kehadiran}**")
 
@@ -127,45 +124,35 @@ if st.button("🚀 Generate Laporan Absensi"):
     else:
         st.success("✅ Laporan Absensi Berhasil Dibuat!")
 
-        # Ringkasan Tabel
+        # ----------------------------------------------------
+        # PERUBAHAN UTAMA: Membuat kolom Detail Nama untuk tabel ringkasan
+        # ----------------------------------------------------
+        nama_hadir_str = "-"
+        nama_total_str = "-"
+        nama_alpha_str = "-"
+        nama_sakit_str = ", ".join(list_sakit) if list_sakit else "-"
+        nama_izin_str = ", ".join(list_izin) if list_izin else "-"
+        nama_dinas_str = ", ".join(list_dinas) if list_dinas else "-"
+        
+        # Ringkasan Tabel dengan kolom Detail Nama
         laporan_data = {
             "Kategori": ["Total Personel", "Hadir", "Sakit", "Izin", "Dinas", "Tanpa Keterangan (Alpha)"],
-            "Jumlah": [jumlah_personel, hadir, sakit, izin, dinas, tanpa_kehadiran]
+            "Jumlah": [jumlah_personel, hadir, sakit, izin, dinas, tanpa_kehadiran],
+            "Detail Nama": [nama_total_str, nama_hadir_str, nama_sakit_str, nama_izin_str, nama_dinas_str, nama_alpha_str] 
         }
         df_laporan = pd.DataFrame(laporan_data)
 
         st.subheader(f"📊 Ringkasan Kehadiran Apel Tanggal {tanggal.strftime('%d %B %Y')}")
+        # Menampilkan DataFrame baru
         st.dataframe(df_laporan.set_index("Kategori")) 
 
         st.markdown("---")
 
-        # ===== Tampilkan Daftar Nama =====
-        st.subheader("👥 Daftar Personel dengan Keterangan")
-
-        st.markdown("#### 🤒 Personel Sakit:")
-        if list_sakit:
-            for nama in list_sakit:
-                st.markdown(f"- {nama}")
-        else:
-            st.markdown("- *Tidak ada personel sakit.*")
-
-        st.markdown("#### 📝 Personel Izin:")
-        if list_izin:
-            for nama in list_izin:
-                st.markdown(f"- {nama}")
-        else:
-            st.markdown("- *Tidak ada personel izin.*")
-
-        st.markdown("#### 🛫 Personel Dinas / Tugas Luar:")
-        if list_dinas:
-            for nama in list_dinas:
-                st.markdown(f"- {nama}")
-        else:
-            st.markdown("- *Tidak ada personel dinas.*")
-
-        st.markdown("---")
-
-        # Simpan CSV
+        # ----------------------------------------------------
+        # MENGHAPUS BAGIAN DAFTAR NAMA TERPISAH (KARENA SUDAH DI TABEL)
+        # ----------------------------------------------------
+        
+        # Simpan CSV (tetap dibuat detail agar mudah diolah)
         all_names = []
         for name in list_sakit:
             all_names.append({"Kategori": "Sakit", "Nama": name})
@@ -188,4 +175,4 @@ if st.button("🚀 Generate Laporan Absensi"):
             st.info("Tidak ada data nama yang perlu diunduh.")
 
 st.markdown("---")
-st.caption("🚀 Ditenagai oleh Streamlit | Absensi Apel Pagi v1.3")
+st.caption("Ditenagai oleh Streamlit | Absensi Apel Pagi v1.4")
