@@ -55,7 +55,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- HEADER SECTION ---
-st.markdown("<h1 class='main-header'>✨ Absensi Apel Pagi ✨</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='main-header'>Absensi Apel Pagi</h1>", unsafe_allow_html=True)
 st.markdown("---")
 
 st.subheader("Input Data Kehadiran")
